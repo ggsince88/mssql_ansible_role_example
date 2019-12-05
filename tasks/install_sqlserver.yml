@@ -1,0 +1,52 @@
+---
+
+  - name: Check if SQL Server already installed
+    win_reg_stat:
+      path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft SQL Server SQL2017
+    register: sql_server
+    tags: install_sql
+
+  - name: If SQL reg key does not exist install SQL server
+    block:
+      - name: check if iso already exists
+        win_stat:
+          path: "{{ target_folder }}{{ iso_name }}"
+          get_checksum: yes
+        register: file_info
+      #TODO: Handle file already exists -- can't just force or delete cause its mounted
+      - name: download iso
+        win_get_url:
+          url: "{{ sql_download_url }}"
+          dest: "{{ target_folder }}{{ iso_name }}"
+          force: yes
+        when:
+          - not file_info.stat.exists
+      #TODO: Handle iso already mounted and file does not exist
+      - name: mount iso
+        win_disk_image:
+          image_path: "{{ target_folder }}{{ iso_name }}"
+          state: present
+        register: disk_image_out
+      - name: copy configuration template
+        win_template:
+          src: sqlserverconfig.j2
+          dest: "{{ target_folder }}sqlserver.config"
+      - name: Run SQL installation
+        win_package:
+          path: "{{ disk_image_out.mount_paths[0] }}setup.exe"
+          product_id: Microsoft SQL Server SQL2017
+          arguments:
+          - /q
+          - "/CONFIGURATIONFILE={{ target_folder }}sqlserver.config"
+          - /IACCEPTSQLSERVERLICENSETERMS
+          - "/SAPWD={{ sa_password }}"
+        register: sql_install_result
+        become: true
+      - name: Reboot if needed after SQL install
+        win_reboot:
+          pre_reboot_delay: 5
+          post_reboot_delay: 120
+        when:
+          - sql_install_result.reboot_required
+    when: not sql_server.exists
+    tags: install_sql

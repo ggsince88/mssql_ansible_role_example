@@ -1,0 +1,44 @@
+---
+
+  - name: create directory for ansible playbook
+    win_file:
+      path: "{{ target_folder }}"
+      state: directory
+    tags: update_sql
+
+  - name: Check if CU is already downloaded
+    win_stat:
+      path: "{{ target_folder }}\\{{ sql_cu['filename'] }}"
+      get_checksum: yes
+    register: cu_file_info
+    tags: update_sql
+
+  - name: Download CU installer
+    win_get_url:
+      url: "{{ sql_cu['url'] }}"
+      dest: "{{ target_folder }}\\{{ sql_cu['filename'] }}"
+    when: not cu_file_info.stat.exists
+    tags: update_sql
+
+  - name: Install CU on all SQL components
+    win_package:
+      path: "{{ target_folder }}\\{{ sql_cu['filename'] }}"
+      # creates_path: C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\Binn\sqlservr.exe
+      # creates_version: "{{ sql_cu['sql_file_ver'] }}"
+      product_id: "{{ sql_cu['kb'] }}"
+      arguments:
+      - /quiet
+      - /IAcceptSQLServerLicenseTerms
+      - /Action=Patch
+      - /AllInstances
+    register: cu_result
+    tags: update_sql
+
+  - name: Reboot if needed after CU install
+    win_reboot:
+      pre_reboot_delay: 5
+      post_reboot_delay: 120
+    when: cu_result.reboot_required
+    tags: update_sql
+
+

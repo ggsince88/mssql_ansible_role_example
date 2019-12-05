@@ -1,0 +1,12 @@
+---
+
+  - name: remove mounted iso
+    win_disk_image:
+      image_path: "{{ target_folder }}{{ iso_name }}"
+      state: absent
+    when: not sql_server.exists
+
+  - name: delete playbook files
+    win_file:
+      path: "{{ target_folder }}"
+      state: absent

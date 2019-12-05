@@ -1,0 +1,56 @@
+---
+# Install CU by default
+mssql_install_cu: true
+mssql_config_updateendabled: 'False'
+mssql_config_usemsupdate: 'False'
+# No longer need below variable since it is sepcified using sql_cu var.
+# mssql_config_updatesource: MU
+
+# SQL Server config INI for installation
+mssql_config_action: 'Install'
+mssql_config_suppressnotice: 'True'
+mssql_config_iaccept: 'True'
+mssql_config_enu: 'True'
+mssql_config_quiet: 'True'
+mssql_config_quietsimple: 'False'
+mssql_config_features:
+    - SQLENGINE
+    - IS
+mssql_config_indicateprogress: 'False'
+mssql_config_instancename: MSSQLSERVER
+mssql_config_installsharedir: C:\Program Files\Microsoft SQL Server
+mssql_config_installsharedwowdir: C:\Program Files (x86)\Microsoft SQL Server
+mssql_config_instanceid: MSSQLSERVER
+mssql_config_sqltelsvcacct: NT Service\SQLTELEMETRY
+mssql_config_instancedir: C:\Program Files\Microsoft SQL Server
+# SQL Agent settings
+mssql_config_agtsvcaccount: NT Service\SQLSERVERAGENT
+mssql_config_agtsvcstartup: Automatic
+# if below is defined then template will include key/value
+# mssql_config_agtsvcpassword:
+
+mssql_config_sqlsvcstartup: Automatic
+mssql_config_filestreamlevel: 0
+mssql_config_sqlsvcaccount: NT Service\MSSQLSERVER
+mssql_config_sqlsysadmins:
+    - DOMAIN\admin1
+    - DOMAIN\admin2
+mssql_config_securitymode: SQL
+
+mssql_config_sqldatadir: D:\Data
+mssql_config_sqlbackupdir: D:\Backup
+
+mssql_config_sqluserdbdir: D:\Data
+mssql_config_sqluserdblogdir: E:\Data
+# TempDB settings
+mssql_config_sqltempdbdir: F:\Data
+mssql_config_sqltempdblogdir: E:\Data
+mssql_config_sqltempdbcount: 8
+mssql_config_sqltempdb_filesize: 8192
+mssql_config_sqltempdb_filegrowth: 256
+mssql_config_sqltempdb_logfilesize: 2048
+mssql_config_sqltempdb_logfilegrowth: 64
+
+# Only include in config if IS is part of mssql_config_features list
+mssql_config_istelsvcacct: NT Service\SSISTELEMETRY140
+mssql_config_istelsvcstartuptype: Automatic

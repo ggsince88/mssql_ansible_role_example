@@ -1,0 +1,29 @@
+---
+# Main folder that is used for script execution and temp files
+target_folder: C:\Windows\Temp\ansible_playbook\
+
+# default URL to download SQL ISO for Eastridge
+sql_download_url: https://s3-REGION.amazonaws.com/BUCKET/SW_DVD9_NTRL_SQL_Svr_Standard_Edtn_2017_64Bit_English_OEM_VL_X21-56945.ISO
+# New iso name after download
+iso_name: sqlstd2017_64bit.iso
+
+sql_cu:
+  version: 15
+  url: https://BUCKET.s3-REGION.amazonaws.com/SQLServer2017-KB4498951-x64.exe
+  filename: SQLServer2017-KB4498951-x64.exe
+  location: C:\ansible_sql_cu_files\
+  sql_file_ver: 2017.140.3162.1 # can be used
+  sql_build_ver: 14.0.3162.1 # not being used
+  kb: KB4498951
+
+win_features:
+  - 'NET-Framework-45-Core'
+  - 'NET-WCF-Services45'
+  - 'NET-WCF-TCP-PortSharing45'
+  - 'FS-FileServer'
+  - 'Storage-Services'
+
+ssms:
+  url: https://BUCKET.s3-REGION.amazonaws.com/SSMS-Setup-ENU18.1.exe
+  filename: SSMS-Setup-ENU18.1.exe
+  

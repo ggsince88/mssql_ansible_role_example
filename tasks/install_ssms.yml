@@ -1,0 +1,26 @@
+---
+
+  - name: create directory for ansible playbook
+    win_file:
+      path: "{{ target_folder }}"
+      state: directory
+    tags: install_ssms
+
+  - name: Download SSMS
+    win_get_url:
+      url: "{{ ssms['url'] }}"
+      dest: "{{ target_folder }}\\{{ ssms['filename'] }}"
+    tags: install_ssms
+
+  - name: Install SSMS
+    win_shell: |
+      $registry = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*
+      $ssms_installed = $registry | Where-Object { $_.DisplayName -eq "SQL Server Management Studio" }
+      if ($ssms_installed) {
+        Write-Host "SSMS Already installed. Exiting..."
+        exit 0
+      } else {
+        Write-Host "Starting SSMS Install..."
+        cmd.exe /c {{ target_folder }}\{{ ssms['filename'] }} /Install /Quiet /Norestart
+      }
+    tags: install_ssms

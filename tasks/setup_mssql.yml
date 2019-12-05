@@ -1,0 +1,21 @@
+---
+
+  - name: Add sysadmins in SQL
+    win_shell: |
+      $pass = ConvertTo-SecureString -AsPlainText "{{ sa_password }}" -force
+      $cred = New-Object Management.Automation.PSCredential -ArgumentList "{{ sa_username }}", $pass
+
+      New-DbaLogin -SqlInstance localhost -SqlCredential $cred -Login "{{ item }}"
+      Set-DbaLogin -SqlInstance localhost -SqlCredential $cred -Login "{{ item }}" -AddRole sysadmin
+
+    loop: "{{ sql_admins }}"
+    tags: setup_mssql
+
+# Check if SQL Agent is started automatically if not set it to start
+# Should be set in config
+  - name: Set SQL Agent to automatically start
+    win_service:
+      name: SQLSERVERAGENT
+      start_mode: auto
+      state: started
+    tags: setup_mssql

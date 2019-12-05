@@ -1,0 +1,14 @@
+---
+  - include_tasks: provision_server.yml
+    tags: provision_sql_server
+  - include_tasks: install_sqlserver.yml
+    tags: install_sql
+  - include_tasks: update_sql.yml
+    tags:
+      - update_sql
+  - include_tasks: setup_mssql.yml
+    tags: setup_mssql
+  - include_tasks: install_ssms.yml
+    tags: install_ssms
+  - include_tasks: cleanup.yml
+    tags: mssql_cleanup

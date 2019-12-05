@@ -1,0 +1,24 @@
+---
+  - name: enable windows features
+    win_feature:
+      name: "{{ win_features }}"
+      state: present
+      include_subfeatures: yes
+      
+# Used for misc sql tasks. Was easier than using actual SQL
+  - name: enable powershell sql module
+    win_psmodule:
+      name: SQLServer
+      state: present
+
+# Used for restoring databases or adding users to SQL
+  - name: Install PoSH dbatools
+    win_psmodule:
+      name: dbatools
+      state: present
+
+  - name: create directory for ansible playbook
+    win_file:
+      path: "{{ target_folder }}"
+      state: directory
+...
